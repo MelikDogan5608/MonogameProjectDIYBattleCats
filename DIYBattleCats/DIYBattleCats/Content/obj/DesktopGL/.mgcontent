@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/background_level1.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/background_level2.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/background_level3.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/background_level4.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/background_level5.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/background.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/button_Sound.mp3</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/emrald_Bar.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/exit_Button.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/map_Button.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/map_lavel1.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/map_lavel2.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/map_lavel3.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/map_lavel4.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/map_lavel5.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/Map.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/money_Bar.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/Music.mp3</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/planroom_Background.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/play_Button_2.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/punch_Sound.mp3</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/settings_Background.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/settings_Button.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/settings_Menu.png</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/sword_Sound.mp3</File>
+    <File>c:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/sword_Sound2.mp3</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>
