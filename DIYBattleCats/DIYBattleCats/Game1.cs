@@ -11,7 +11,7 @@ public class Game1 : Game
 
     enum GameState { Menu, Settings, Playing, MapSelection, Battle }
     GameState currentState = GameState.Menu;
-
+  // delete this please
     Texture2D background, planroomBackground, mapBackgroundTex, battleBackgroundTex;
     Texture2D playButton, settingsButton, exitButton, settingsBackground, settingsMenu, pixel;
     Texture2D mapButtonTex, emeraldBarTex, moneyBarTex, levelTex;
