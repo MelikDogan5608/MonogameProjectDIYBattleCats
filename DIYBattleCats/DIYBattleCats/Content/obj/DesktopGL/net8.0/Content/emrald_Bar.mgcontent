@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/emrald_Bar.png</SourceFile>
-  <SourceTime>2026-05-09T20:58:46.808923+03:00</SourceTime>
-  <DestFile>C:/Users/latte/Videos/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/bin/DesktopGL/Content/emrald_Bar.xnb</DestFile>
-  <DestTime>2026-05-09T22:35:14.0766929+03:00</DestTime>
+  <SourceFile>C:/Users/rondo/Documents/GitHub/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/emrald_Bar.png</SourceFile>
+  <SourceTime>2026-05-29T18:28:23.5909477+03:00</SourceTime>
+  <DestFile>C:/Users/rondo/Documents/GitHub/MonogameProjectDIYBattleCats/DIYBattleCats/DIYBattleCats/Content/bin/DesktopGL/Content/emrald_Bar.xnb</DestFile>
+  <DestTime>2026-05-29T18:31:22.2469496+03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2025-06-02T13:31:02+03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

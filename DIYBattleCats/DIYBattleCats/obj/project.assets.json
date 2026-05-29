@@ -295,19 +295,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\latte\\.nuget\\packages\\": {}
+    "C:\\Users\\rondo\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\latte\\Videos\\MonogameProjectDIYBattleCats\\DIYBattleCats\\DIYBattleCats\\DIYBattleCats.csproj",
+      "projectUniqueName": "C:\\Users\\rondo\\Documents\\GitHub\\MonogameProjectDIYBattleCats\\DIYBattleCats\\DIYBattleCats\\DIYBattleCats.csproj",
       "projectName": "DIYBattleCats",
-      "projectPath": "C:\\Users\\latte\\Videos\\MonogameProjectDIYBattleCats\\DIYBattleCats\\DIYBattleCats\\DIYBattleCats.csproj",
-      "packagesPath": "C:\\Users\\latte\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\latte\\Videos\\MonogameProjectDIYBattleCats\\DIYBattleCats\\DIYBattleCats\\obj\\",
+      "projectPath": "C:\\Users\\rondo\\Documents\\GitHub\\MonogameProjectDIYBattleCats\\DIYBattleCats\\DIYBattleCats\\DIYBattleCats.csproj",
+      "packagesPath": "C:\\Users\\rondo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rondo\\Documents\\GitHub\\MonogameProjectDIYBattleCats\\DIYBattleCats\\DIYBattleCats\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\latte\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\rondo\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -331,7 +331,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -360,19 +360,19 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.20, 8.0.20]"
+            "version": "[8.0.23, 8.0.23]"
           },
           {
             "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[8.0.20, 8.0.20]"
+            "version": "[8.0.23, 8.0.23]"
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.20, 8.0.20]"
+            "version": "[8.0.23, 8.0.23]"
           },
           {
             "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.20, 8.0.20]"
+            "version": "[8.0.23, 8.0.23]"
           }
         ],
         "frameworkReferences": {
@@ -380,7 +380,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
