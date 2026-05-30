@@ -5,72 +5,112 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DIYBattleCats
 {
     public enum Side { Player, Enemy }
 
-    // unit class
     public class Unit
     {
         public Vector2 Position;
         public Side Side;
-        public float Speed = 80f;
-        public int Health = 50;
-        public int Damage = 15;
+        public float Speed;
+        public int Health;
+        public int Damage;
         private float _attackTimer = 0;
         private float _attackSpeed = 1.0f;
         public bool IsDead => Health <= 0;
         public bool IsAttacking = false;
+        public bool IsInQueue = false;
 
-        public Unit(Vector2 startPos, Side side)
+        public int PendingDamage = 0;
+
+        public Unit(Vector2 startPos, Side side, int level)
         {
-            Position = startPos;
+            Position = startPos; 
             Side = side;
+            Speed = 80f;
+            Health = 10;  
+            Damage = 10; 
         }
 
-        public void Update(GameTime gameTime, List<Unit> targets, ref int baseHealth)
+        public void UpdateLogic(GameTime gameTime, Unit enemyLeader, Unit allyAhead, bool isFrontLeader)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            IsAttacking = false;
-
-            // fight test
-            foreach (var target in targets)
+            
+            if (IsDead)
             {
-                if (target.Side != this.Side && Vector2.Distance(this.Position, target.Position) < 35)
-                {
-                    IsAttacking = true;
-                    PerformAttack(target, dt);
-                    break; 
-                }
+                IsAttacking = false;
+                IsInQueue = false;
+                return;
             }
 
-            // tower is under attack test
-            if (!IsAttacking)
+            // 1. ATTACK LOGIC (Only for the front leader, if the enemy is within range)
+            if (isFrontLeader && enemyLeader != null && Vector2.Distance(this.Position, enemyLeader.Position) < 35)
             {
-                if ((Side == Side.Player && Position.X < 70) || (Side == Side.Enemy && Position.X > 730))
+                IsAttacking = true;
+                IsInQueue = false;
+
+                _attackTimer += dt;
+                if (_attackTimer >= _attackSpeed)
                 {
-                    IsAttacking = true;
-                    baseHealth -= Damage;
-                    Health = 0; // unit sacrifices itself when hitting the base
+                    enemyLeader.PendingDamage += this.Damage;
+                    _attackTimer = 0;
                 }
             }
+            // 2. QUEUE LOGIC (For everyone else). 
+            // The unit joins the queue ONLY if it has physically reached the ally walking in front of it!
+            else if (!isFrontLeader && allyAhead != null)
+            {
+                IsAttacking = false;
+                _attackTimer = 0;
 
-            // movement
-            if (!IsAttacking)
+                if (Side == Side.Player)
+                {
+                    // If the player has caught up with the comrade in front (they are to the left of them within attack distance)
+                    if (this.Position.X <= allyAhead.Position.X + 35)
+                    {
+                        IsInQueue = true;
+                        this.Position.X = allyAhead.Position.X + 35; // Adjust position to be flush against them
+                    }
+                    else
+                    {
+                        IsInQueue = false; // Has not reached them yet, continues running
+                    }
+                }
+                else // For enemies
+                {
+                    // If the enemy has caught up with their comrade (they are to the right of them)
+                    if (this.Position.X >= allyAhead.Position.X - 35)
+                    {
+                        IsInQueue = true;
+                        this.Position.X = allyAhead.Position.X - 35;
+                    }
+                    else
+                    {
+                        IsInQueue = false;
+                    }
+                }
+            }
+            else
+            {
+                IsAttacking = false;
+                IsInQueue = false;
+                _attackTimer = 0;
+            }
+
+            // Move forward only if not attacking and not standing in queue
+            if (!IsAttacking && !IsInQueue)
             {
                 Position.X += (Side == Side.Enemy ? 1 : -1) * Speed * dt;
             }
         }
 
-        private void PerformAttack(Unit target, float dt)
+        public void ApplyDamage()
         {
-            _attackTimer += dt;
-            if (_attackTimer >= _attackSpeed)
-            {
-                target.Health -= this.Damage;
-                _attackTimer = 0;
-            }
+            Health -= PendingDamage;
+            PendingDamage = 0;
         }
     }
 
@@ -79,10 +119,9 @@ namespace DIYBattleCats
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        enum GameState { Menu, Settings, Playing, MapSelection, Battle, GameOver } // Добавили GameOver
+        enum GameState { Menu, Settings, Playing, MapSelection, Battle, GameOver }
         GameState currentState = GameState.Menu;
 
-        // object variables
         Texture2D background, planroomBackground, mapBackgroundTex, battleBackgroundTex;
         Texture2D playButton, settingsButton, exitButton, settingsBackground, settingsMenu, pixel;
         Texture2D mapButtonTex, emeraldBarTex, moneyBarTex, levelTex;
@@ -98,15 +137,15 @@ namespace DIYBattleCats
         Song music; 
         SoundEffect buttonSound; 
 
-        // gameplay variables
         private List<Unit> _battleUnits = new List<Unit>();
         private float _battleGold = 100;
-        private float _goldPassiveRate = 5f;
+        private float _goldPassiveRate = 6f; 
         private int _unitCost = 30;
         private int _playerBaseHp = 500;
         private int _enemyBaseHp = 500;
         private float _enemySpawnTimer = 0;
         private KeyboardState _oldKeyState;
+        private int _currentLevel = 0;
 
         public Game1()
         {
@@ -123,7 +162,6 @@ namespace DIYBattleCats
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });
 
-            // uploading of a content
             background = Content.Load<Texture2D>("background");
             planroomBackground = Content.Load<Texture2D>("planroom_Background");
             mapBackgroundTex = Content.Load<Texture2D>("Map");
@@ -206,14 +244,15 @@ namespace DIYBattleCats
                             {
                                 buttonSound?.Play();
                                 battleBackgroundTex = battleBacks[i];
-                                
-                                // reset game data before battle
+                                _currentLevel = i; 
+
                                 _battleUnits.Clear();
                                 _battleGold = 100;
                                 _playerBaseHp = 500;
                                 _enemyBaseHp = 500;
                                 _enemySpawnTimer = 0;
 
+                                MediaPlayer.Stop(); 
                                 currentState = GameState.Battle;
                                 break;
                             }
@@ -222,41 +261,81 @@ namespace DIYBattleCats
                     break;
 
                 case GameState.Battle:
-                    if (keyState.IsKeyDown(Keys.Escape)) currentState = GameState.MapSelection;
+                    if (keyState.IsKeyDown(Keys.Escape)) 
+                    {
+                        MediaPlayer.Volume = musicVolume;
+                        MediaPlayer.Play(music); 
+                        SoundEffect.MasterVolume = soundVolume;
+                        currentState = GameState.MapSelection;
+                    }
 
-                    // logic of a fight
                     _battleGold += _goldPassiveRate * dt;
 
-                    // press 1 to buy unit
+                    // Player spawn at base (X = 730)
                     if (keyState.IsKeyDown(Keys.D1) && _oldKeyState.IsKeyUp(Keys.D1) && _battleGold >= _unitCost)
                     {
-                        _battleUnits.Add(new Unit(new Vector2(730, 350), Side.Player));
+                        _battleUnits.Add(new Unit(new Vector2(730, 350), Side.Player, _currentLevel));
                         _battleGold -= _unitCost;
+                        SoundEffect.MasterVolume = 1.0f;
+                        buttonSound?.Play();
                     }
 
-                    // enemy spawn
+                    // Enemy spawn at base (X = 70) with increased difficulty
                     _enemySpawnTimer += dt;
-                    if (_enemySpawnTimer > 4.0f)
+                    float currentSpawnInterval = MathMax(6.5f - (_currentLevel * 0.75f), 3.5f); 
+                    if (_enemySpawnTimer > currentSpawnInterval)
                     {
-                        _battleUnits.Add(new Unit(new Vector2(70, 350), Side.Enemy));
+                        _battleUnits.Add(new Unit(new Vector2(70, 350), Side.Enemy, _currentLevel));
                         _enemySpawnTimer = 0;
+                        SoundEffect.MasterVolume = 1.0f;
+                        buttonSound?.Play();
                     }
 
-                    // unit upgrades
+                    // Sort lists to correctly determine "who is in front"
+                    var sortedPlayerUnits = _battleUnits.Where(u => u.Side == Side.Player).OrderBy(u => u.Position.X).ToList();
+                    var sortedEnemyUnits = _battleUnits.Where(u => u.Side == Side.Enemy).OrderByDescending(u => u.Position.X).ToList();
+
+                    Unit playerLeader = sortedPlayerUnits.FirstOrDefault();
+                    Unit enemyLeader = sortedEnemyUnits.FirstOrDefault();
+
+                    // PLAYER UNITS LOGIC UPDATE
+                    for (int i = 0; i < sortedPlayerUnits.Count; i++)
+                    {
+                        var unit = sortedPlayerUnits[i];
+                        bool isLeader = (unit == playerLeader);
+                        // The one right before them in the list is the ally moving in front of them
+                        Unit allyAhead = isLeader ? null : sortedPlayerUnits[i - 1]; 
+                        
+                        unit.UpdateLogic(gameTime, enemyLeader, allyAhead, isLeader);
+                    }
+
+                    // ENEMY UNITS LOGIC UPDATE
+                    for (int i = 0; i < sortedEnemyUnits.Count; i++)
+                    {
+                        var unit = sortedEnemyUnits[i];
+                        bool isLeader = (unit == enemyLeader);
+                        Unit allyAhead = isLeader ? null : sortedEnemyUnits[i - 1];
+
+                        unit.UpdateLogic(gameTime, playerLeader, allyAhead, isLeader);
+                    }
+
+                    // Check base attacks by leaders
+                    if (playerLeader != null && playerLeader.Position.X < 70) { _enemyBaseHp -= playerLeader.Damage; playerLeader.Health = 0; }
+                    if (enemyLeader != null && enemyLeader.Position.X > 730) { _playerBaseHp -= enemyLeader.Damage; enemyLeader.Health = 0; }
+
+                    // Apply damage at the end of the frame
                     for (int i = 0; i < _battleUnits.Count; i++)
                     {
-                        ref int targetBaseHp = ref (_battleUnits[i].Side == Side.Player ? ref _enemyBaseHp : ref _playerBaseHp);
-                        _battleUnits[i].Update(gameTime, _battleUnits, ref targetBaseHp);
+                        _battleUnits[i].ApplyDamage();
                     }
 
-                    // reward for a kill
+                    // Reward and clean up list
                     foreach (var u in _battleUnits)
                     {
                         if (u.IsDead && u.Side == Side.Enemy) _battleGold += 15;
                     }
                     _battleUnits.RemoveAll(u => u.IsDead);
 
-                    // checking the end of the battle
                     if (_playerBaseHp <= 0 || _enemyBaseHp <= 0)
                     {
                         currentState = GameState.GameOver;
@@ -270,7 +349,7 @@ namespace DIYBattleCats
                         draggingMusic = musicBar.Contains(pos) || draggingMusic;
                         draggingSound = soundBar.Contains(pos) || draggingSound;
                     }
-                    else draggingMusic = draggingSound = false;
+                    else draggingSound = draggingMusic = false;
 
                     if (draggingMusic) { musicVolume = MathHelper.Clamp((pos.X - musicBar.X) / (float)musicBar.Width, 0f, 1f); MediaPlayer.Volume = musicVolume; }
                     if (draggingSound) { soundVolume = MathHelper.Clamp((pos.X - soundBar.X) / (float)soundBar.Width, 0f, 1f); SoundEffect.MasterVolume = soundVolume; }
@@ -278,13 +357,21 @@ namespace DIYBattleCats
                     break;
 
                 case GameState.GameOver:
-                    if (keyState.IsKeyDown(Keys.Enter)) currentState = GameState.MapSelection;
+                    if (keyState.IsKeyDown(Keys.Enter))
+                    {
+                        MediaPlayer.Volume = musicVolume;
+                        MediaPlayer.Play(music);
+                        SoundEffect.MasterVolume = soundVolume;
+                        currentState = GameState.MapSelection;
+                    }
                     break;
             }
             _oldKeyState = keyState;
             previousMouse = mouse;
             base.Update(gameTime);
         }
+
+        private float MathMax(float a, float b) => a > b ? a : b;
 
         protected override void Draw(GameTime gameTime)
         {
@@ -312,30 +399,59 @@ namespace DIYBattleCats
             }
             else if (currentState == GameState.Battle && battleBackgroundTex != null)
             {
-                // 1. draw a background
                 _spriteBatch.Draw(battleBackgroundTex, GraphicsDevice.Viewport.Bounds, Color.White);
 
-                // 2. draw game objects over the background
-                // ground
-                _spriteBatch.Draw(pixel, new Rectangle(0, 380, 800, 100), Color.DarkOliveGreen * 0.5f);
-
-                // calculating tower heights based on their hp
                 int pBaseHeight = (int)(100 * (_playerBaseHp / 500f));
                 int eBaseHeight = (int)(100 * (_enemyBaseHp / 500f));
 
-                // towers
                 _spriteBatch.Draw(pixel, new Rectangle(0, 380 - eBaseHeight, 70, eBaseHeight), Color.Maroon);
                 _spriteBatch.Draw(pixel, new Rectangle(730, 380 - pBaseHeight, 70, pBaseHeight), Color.DarkGreen);
 
-                // Drawing of a player units
-                foreach (var unit in _battleUnits)
+                Unit activePlayerLeader = _battleUnits.Where(u => u.Side == Side.Player).OrderBy(u => u.Position.X).FirstOrDefault();
+                Unit activeEnemyLeader = _battleUnits.Where(u => u.Side == Side.Enemy).OrderByDescending(u => u.Position.X).FirstOrDefault();
+
+                int playerStackIndex = 0;
+                int enemyStackIndex = 0;
+
+                var renderPlayerUnits = _battleUnits.Where(u => u.Side == Side.Player).OrderBy(u => u.Position.X).ToList();
+                var renderEnemyUnits = _battleUnits.Where(u => u.Side == Side.Enemy).OrderBy(u => u.Position.X).ToList();
+
+                foreach (var unit in renderPlayerUnits)
                 {
-                    Color c = (unit.Side == Side.Player) ? Color.LimeGreen : Color.HotPink;
-                    if (unit.IsAttacking) c = Color.White;
-                    _spriteBatch.Draw(pixel, new Rectangle((int)unit.Position.X, (int)unit.Position.Y, 30, 30), c);
+                    Color c = Color.LimeGreen;
+                    if (unit.IsAttacking && unit == activePlayerLeader) c = Color.White;
+
+                    int renderX = (int)unit.Position.X;
+                    int renderY = (int)unit.Position.Y;
+
+                    if (unit.IsAttacking || unit.IsInQueue)
+                    {
+                        renderX = (int)activePlayerLeader.Position.X;
+                        renderY = (int)activePlayerLeader.Position.Y - (playerStackIndex * 35);
+                        playerStackIndex++;
+                    }
+
+                    _spriteBatch.Draw(pixel, new Rectangle(renderX, renderY, 30, 30), c);
                 }
 
-                // gold indicator
+                foreach (var unit in renderEnemyUnits)
+                {
+                    Color c = Color.HotPink;
+                    if (unit.IsAttacking && unit == activeEnemyLeader) c = Color.White;
+
+                    int renderX = (int)unit.Position.X;
+                    int renderY = (int)unit.Position.Y;
+
+                    if (unit.IsAttacking || unit.IsInQueue)
+                    {
+                        renderX = (int)activeEnemyLeader.Position.X;
+                        renderY = (int)activeEnemyLeader.Position.Y - (enemyStackIndex * 35);
+                        enemyStackIndex++;
+                    }
+
+                    _spriteBatch.Draw(pixel, new Rectangle(renderX, renderY, 30, 30), c);
+                }
+
                 _spriteBatch.Draw(pixel, new Rectangle(10, 10, 150, 40), Color.Black * 0.6f);
                 DrawNumber((int)_battleGold, 20, 20, Color.Gold);
             }
@@ -349,8 +465,7 @@ namespace DIYBattleCats
             else if (currentState == GameState.GameOver)
             {
                 GraphicsDevice.Clear(Color.DarkRed);
-                // drawing the end-of-game inscription
-                DrawNumber(0000, 350, 200, Color.White); // temporary placeholder instead of text game over
+                DrawNumber(0000, 350, 200, Color.White); 
             }
 
             _spriteBatch.End();
