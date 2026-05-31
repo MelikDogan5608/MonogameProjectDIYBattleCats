@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DIYBattleCats")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d005241160e3091df96ff0537420fd7eea15351d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96e7204b58a474bb982e922aa04446cb84e98ca7")]
 [assembly: System.Reflection.AssemblyProductAttribute("DIYBattleCats")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DIYBattleCats")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
